@@ -1,0 +1,29 @@
+# ExcelTools Pro - Python Dependencies
+# =====================================
+# Requisiti per l'applicazione ExcelTools Pro
+# Ultima modifica: 2025-07-16
+
+# Core data processing
+pandas>=2.0.0
+numpy>=1.24.0
+openpyxl>=3.1.0
+
+# GUI Framework
+customtkinter>=5.2.0
+# tkinter è incluso con Python standard
+
+# File monitoring and scheduling
+watchdog>=3.0.0
+schedule>=1.2.0
+
+# Excel file support
+xlrd>=2.0.0
+xlsxwriter>=3.0.0
+
+# Plotting and visualization
+matplotlib>=3.5.0
+
+# Optional: Enhanced features
+# seaborn>=0.11.0      # Per grafici avanzati
+# pyarrow>=10.0.0      # Per performance pandas
+# flake8>=5.0.0        # Per code linting
