@@ -3,26 +3,23 @@
 🏢 EXCELTOOLS PRO - ADVANCED DATABASE MANAGER
 ============================================
 
-Sistema avanzato di gestione database con interfaccia grafica per selezione dati,
-query builder visuale, merge di file e gestione viste salvate.
+Sistema avanzato di gestione database con interfaccia grafica per
+selezione dati, query builder visuale, merge di file e gestione
+viste salvate.
 
 Autore: Senior DB IT Manager Developer & DevOps Analyst
 Data: 2025-07-16
 Versione: Advanced 4.0
 """
 
-import os
 import sqlite3
 import json
-import threading
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import ttk, messagebox
 
 try:
     import pandas as pd
-    import numpy as np
     HAS_PANDAS = True
 except ImportError:
     HAS_PANDAS = False

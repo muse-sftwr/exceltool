@@ -1,0 +1,16 @@
+Prodotto,Categoria,Prezzo,Scorte,Fornitore
+Laptop HP,Elettronica,899.99,25,TechSupply
+Mouse Logitech,Elettronica,29.99,150,TechSupply
+Tastiera Meccanica,Elettronica,89.99,75,TechSupply
+Monitor 24",Elettronica,249.99,40,DisplayCorp
+Cuffie Bluetooth,Elettronica,79.99,60,AudioMax
+Smartphone Samsung,Elettronica,699.99,30,MobileStore
+Tablet iPad,Elettronica,449.99,20,AppleReseller
+Smartwatch,Elettronica,199.99,35,TechGadgets
+Stampante Laser,Elettronica,159.99,15,OfficeTech
+Webcam HD,Elettronica,49.99,80,TechSupply
+Hard Disk 1TB,Elettronica,69.99,100,StorageKing
+SSD 500GB,Elettronica,89.99,65,StorageKing
+Memoria RAM 16GB,Elettronica,129.99,45,TechComponents
+Scheda Video,Elettronica,299.99,12,GameTech
+Router WiFi,Elettronica,79.99,50,NetworkPro
