@@ -63,7 +63,8 @@ def create_sample_excel():
 
     # Calcola totale vendita
     df = pd.DataFrame(data)
-    df['Totale_Vendita'] = df['Quantità'] * df['Prezzo_Unitario'] * (1 - df['Sconto_%'] / 100)
+    df['Totale_Vendita'] = df['Quantità'] * \
+        df['Prezzo_Unitario'] * (1 - df['Sconto_%'] / 100)
     df['Totale_Vendita'] = df['Totale_Vendita'].round(2)
 
     # Aggiungi alcune righe con valori null per testare

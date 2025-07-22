@@ -57,18 +57,16 @@ def remove_unused_imports(content):
     for name in import_info.keys():
         # Pattern per trovare utilizzi reali del nome
         patterns = [
-            r'\b{re.escape(name)}\.',      # nome.metodo
-            rf'\b{re.escape(name)}\(',      # nome(args)
-            r'\b{re.escape(name)}\[',      # nome[index]
-            rf'=\s*{re.escape(name)}\b',    # var = nome
-            r'\(\s*{re.escape(name)}\b',   # func(nome
-            rf',\s*{re.escape(name)}\b',    # arg1, nome
-            r':\s*{re.escape(name)}\b',    # type: nome
-            rf'isinstance\([
-                ^
-            ]+,\s*{re.escape(name)}\)',  # isinstance(x, nome)
-            r'raise\s+{re.escape(name)}\b',  # raise nome
-            rf'except\s+{re.escape(name)}\b',  # except nome
+            fr'\b{re.escape(name)}\.',      # nome.metodo
+            fr'\b{re.escape(name)}\(',      # nome(args)
+            fr'\b{re.escape(name)}\[',      # nome[index]
+            fr'=\s*{re.escape(name)}\b',    # var = nome
+            fr'\(\s*{re.escape(name)}\b',   # func(nome
+            fr',\s*{re.escape(name)}\b',    # arg1, nome
+            fr':\s*{re.escape(name)}\b',    # type: nome
+            fr'isinstance\([^)]+,\s*{re.escape(name)}\)',  # isinstance(x, nome)
+            fr'raise\s+{re.escape(name)}\b',  # raise nome
+            fr'except\s+{re.escape(name)}\b',  # except nome
         ]
 
         for pattern in patterns:
@@ -107,8 +105,7 @@ def remove_unused_imports(content):
                     else:
                         # Ricostruisci import solo con moduli utilizzati
                         indent = len(line) - len(line.lstrip())
-                        new_line = ' ' * indent + 'import ' + ',
-                            '.join(used_modules)
+                        new_line = ' ' * indent + 'import ' + ', '.join(used_modules)
                         result_lines.append(new_line)
                 # Se used_modules è vuoto, la riga viene omessa
 
@@ -135,8 +132,7 @@ def remove_unused_imports(content):
                         else:
                             # Ricostruisci from import solo con nomi utilizzati
                             indent = len(line) - len(line.lstrip())
-                            new_line = "{' ' * indent}{module_part} import {',
-                                '.join(used_imports)}"
+                            new_line = f"{' ' * indent}{module_part} import {', '.join(used_imports)}"
                             result_lines.append(new_line)
                     # Se used_imports è vuoto, la riga viene omessa
                 else:

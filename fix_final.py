@@ -125,8 +125,7 @@ def fix_dict_or_list_line(line):
         after = line[brace_end:]
 
         if ',' in content:
-            items = [item.strip() for item in content.split(',
-                ') if item.strip()]
+            items = [item.strip() for item in content.split(',') if item.strip()]
 
             lines = [before]
             for i, item in enumerate(items):
@@ -146,8 +145,7 @@ def fix_dict_or_list_line(line):
         after = line[bracket_end:]
 
         if ',' in content:
-            items = [item.strip() for item in content.split(',
-                ') if item.strip()]
+            items = [item.strip() for item in content.split(',') if item.strip()]
 
             lines = [before]
             for i, item in enumerate(items):

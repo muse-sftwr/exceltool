@@ -3,17 +3,25 @@
 
 📦 PREPARAZIONE COMPLETATA PER: https://github.com/muse-sftwr/exceltool
 
-✅ FILES PREPARATI:
+
+✅ FILES ESSENZIALI PER DEPLOYMENT/PUBBLICAZIONE:
 ├── 📄 README.md                    # Documentazione completa del progetto
 ├── 📄 LICENSE                      # Licenza MIT
 ├── 📄 .gitignore                   # Git ignore per Python/Excel
 ├── 📄 requirements.txt             # Dipendenze Python
-├── 🚀 deploy-github.bat            # Script deployment Windows
-├── 🚀 deploy-github.sh             # Script deployment Linux/Mac
-├── 🐍 app.py                       # Applicazione principale (VUOTA - da ripristinare)
-├── 🐍 create_test_files.py         # Generatore dati test (PEP8 ✅)
-├── 📁 docs/                        # Documentazione
-└── 📁 .vscode/                     # Configurazione VS Code
+├── � app.py                       # Applicazione principale (entrypoint)
+├── � advanced_excel_tools_gui.py  # GUI principale del tool
+├── 🐍 ai_query_interpreter.py      # Modulo AI Query Interpreter
+├── 🐍 advanced_database_manager.py # Gestione database avanzata
+├── � docs/                        # Documentazione (opzionale ma consigliata)
+└── 📁 .vscode/                     # Configurazione VS Code (opzionale)
+
+❌ FILE DA ESCLUDERE DAL DEPLOYMENT (NON NECESSARI):
+- Tutti i file di backup, test, script di correzione, file temporanei, log, __pycache__, file *_test.py, *_backup.py, *_clean.py, *_final.py, *_complete.py, *_design.py, *_enterprise.py, *_nasa.py, *_quick.py, *_simple.py, *_robust.py, ecc.
+- File di dati di esempio e database di test (eccetto se vuoi fornire demo): dati_aziendali_esempio.xlsx, *.db, *.csv, ecc.
+- Script di push manuale, script di test, file di documentazione secondaria.
+
+🔒 Mantieni la repo pulita: aggiungi/rimuovi solo i file sopra elencati per una pubblicazione professionale.
 
 🎯 STATO CORREZIONI PEP8:
 ✅ create_test_files.py - 100% PEP8 compliant

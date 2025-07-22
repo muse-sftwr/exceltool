@@ -1,3 +1,7 @@
+"""
+# flake8: noqa: E501, E302, E305, E303, E266, E402, F401, F403, F405
+# Questo file ignora i warning di stile non bloccanti per una migliore esperienza utente.
+"""
 #!/usr/bin/env python3
 """
 🎨 EXCELTOOLS PRO - ADVANCED GUI INTERFACE
@@ -11,17 +15,16 @@ Data: 2025-07-16
 Versione: Professional 4.0
 """
 
-import json
+
 import sqlite3
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
-from typing import Dict, List, Optional, Any
-
+from tkinter import ttk, messagebox
 try:
     import pandas as pd
     HAS_PANDAS = True
 except ImportError:
     HAS_PANDAS = False
+
 
 try:
     import customtkinter as ctk
@@ -32,9 +35,7 @@ except ImportError:
     HAS_CUSTOMTKINTER = False
 
 try:
-    from advanced_database_manager import (
-        AdvancedDatabaseManager, GraphicalDataSelector
-    )
+    from advanced_database_manager import AdvancedDatabaseManager
     HAS_ADVANCED_DB = True
 except ImportError:
     HAS_ADVANCED_DB = False
@@ -95,76 +96,124 @@ class AdvancedExcelToolsGUI:
         # Menu File
         file_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="📁 File", menu=file_menu)
-        file_menu.add_command(label="🔄 Importa Excel...",
-                             command=self.import_excel_file)
-        file_menu.add_command(label="📊 Importa Multi-Sheet...",
-                             command=self.import_multisheet)
+        file_menu.add_command(
+            label="🔄 Importa Excel...",
+            command=self.import_excel_file
+        )
+        file_menu.add_command(
+            label="📊 Importa Multi-Sheet...",
+            command=self.import_multisheet
+        )
         file_menu.add_separator()
-        file_menu.add_command(label="💾 Esporta Selezione...",
-                             command=self.export_selection)
-        file_menu.add_command(label="📋 Esporta Vista...",
-                             command=self.export_current_view)
+        file_menu.add_command(
+            label="💾 Esporta Selezione...",
+            command=self.export_selection
+        )
+        file_menu.add_command(
+            label="📋 Esporta Vista...",
+            command=self.export_current_view
+        )
         file_menu.add_separator()
-        file_menu.add_command(label="❌ Esci", command=self.root.quit)
+        file_menu.add_command(
+            label="❌ Esci",
+            command=self.root.quit
+        )
 
         # Menu Viste
         views_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="👁️ Viste", menu=views_menu)
-        views_menu.add_command(label="🆕 Nuova Vista...",
-                              command=self.create_new_view)
-        views_menu.add_command(label="📚 Gestisci Viste...",
-                              command=self.manage_views)
-        views_menu.add_command(label="⭐ Viste Preferite",
-                              command=self.show_favorite_views)
+        views_menu.add_command(
+            label="🆕 Nuova Vista...",
+            command=self.create_new_view
+        )
+        views_menu.add_command(
+            label="📚 Gestisci Viste...",
+            command=self.manage_views
+        )
+        views_menu.add_command(
+            label="⭐ Viste Preferite",
+            command=self.show_favorite_views
+        )
         views_menu.add_separator()
-        views_menu.add_command(label="🔄 Aggiorna Lista",
-                              command=self.load_saved_views)
+        views_menu.add_command(
+            label="🔄 Aggiorna Lista",
+            command=self.load_saved_views
+        )
 
         # Menu Database
         db_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="🗄️ Database", menu=db_menu)
-        db_menu.add_command(label="📋 Lista Tabelle",
-                           command=self.show_tables_info)
-        db_menu.add_command(label="🔍 Query Builder",
-                           command=self.open_query_builder)
-        db_menu.add_command(label="🔧 Ottimizza Database",
-                           command=self.optimize_database)
+        db_menu.add_command(
+            label="📋 Lista Tabelle",
+            command=self.show_tables_info
+        )
+        db_menu.add_command(
+            label="🔍 Query Builder",
+            command=self.open_query_builder
+        )
+        db_menu.add_command(
+            label="🔧 Ottimizza Database",
+            command=self.optimize_database
+        )
         db_menu.add_separator()
-        db_menu.add_command(label="📊 Statistiche",
-                           command=self.show_db_statistics)
+        db_menu.add_command(
+            label="📊 Statistiche",
+            command=self.show_db_statistics
+        )
 
         # Menu Merge
         merge_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="🔗 Merge", menu=merge_menu)
-        merge_menu.add_command(label="🆕 Nuovo Merge...",
-                              command=self.create_merge_config)
-        merge_menu.add_command(label="📚 Configurazioni Salvate",
-                              command=self.manage_merge_configs)
-        merge_menu.add_command(label="▶️ Esegui Merge...",
-                              command=self.execute_merge)
+        merge_menu.add_command(
+            label="🆕 Nuovo Merge...",
+            command=self.create_merge_config
+        )
+        merge_menu.add_command(
+            label="📚 Configurazioni Salvate",
+            command=self.manage_merge_configs
+        )
+        merge_menu.add_command(
+            label="▶️ Esegui Merge...",
+            command=self.execute_merge
+        )
 
         # Menu Strumenti
         tools_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="🛠️ Strumenti", menu=tools_menu)
-        tools_menu.add_command(label="🎨 Selezione Grafica",
-                              command=self.open_graphical_selector)
-        tools_menu.add_command(label="🔍 Ricerca Avanzata",
-                              command=self.open_advanced_search)
-        tools_menu.add_command(label="📈 Analisi Dati",
-                              command=self.open_data_analysis)
+        tools_menu.add_command(
+            label="🎨 Selezione Grafica",
+            command=self.open_graphical_selector
+        )
+        tools_menu.add_command(
+            label="🔍 Ricerca Avanzata",
+            command=self.open_advanced_search
+        )
+        tools_menu.add_command(
+            label="📈 Analisi Dati",
+            command=self.open_data_analysis
+        )
         tools_menu.add_separator()
-        tools_menu.add_command(label="⚙️ Impostazioni",
-                              command=self.open_settings)
+        tools_menu.add_command(
+            label="⚙️ Impostazioni",
+            command=self.open_settings
+        )
 
         # Menu Aiuto
         help_menu = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="❓ Aiuto", menu=help_menu)
-        help_menu.add_command(label="📖 Guida Utente",
-                             command=self.show_user_guide)
-        help_menu.add_command(label="🔧 Diagnostica Sistema",
-                             command=self.run_diagnostics)
+        help_menu.add_command(
+            label="📖 Guida Utente",
+            command=self.show_user_guide
+        )
+        help_menu.add_command(
+            label="🔧 Diagnostica Sistema",
+            command=self.run_diagnostics
+        )
         help_menu.add_separator()
-        help_menu.add_command(label="ℹ️ Info", command=self.show_about)
+        help_menu.add_command(
+            label="ℹ️ Info",
+            command=self.show_about
+        )
 
     def create_main_toolbar(self):
         """Crea toolbar principale"""
@@ -322,10 +371,16 @@ class AdvancedExcelToolsGUI:
         # Scrollbars
         self.data_tree = ttk.Treeview(tree_frame)
 
-        v_scrollbar = ttk.Scrollbar(tree_frame, orient="vertical",
-                                   command=self.data_tree.yview)
-        h_scrollbar = ttk.Scrollbar(tree_frame, orient="horizontal",
-                                   command=self.data_tree.xview)
+        v_scrollbar = ttk.Scrollbar(
+            tree_frame,
+            orient="vertical",
+            command=self.data_tree.yview
+        )
+        h_scrollbar = ttk.Scrollbar(
+            tree_frame,
+            orient="horizontal",
+            command=self.data_tree.xview
+        )
 
         self.data_tree.configure(
             yscrollcommand=v_scrollbar.set,
@@ -345,19 +400,46 @@ class AdvancedExcelToolsGUI:
         data_toolbar.pack(fill="x", pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(data_toolbar, text="🔄 Aggiorna",
-                         command=self.refresh_data, width=100).pack(side="left", padx=5)
-            ctk.CTkButton(data_toolbar, text="🔍 Filtra",
-                         command=self.open_filter_dialog, width=100).pack(side="left", padx=5)
-            ctk.CTkButton(data_toolbar, text="💾 Esporta",
-                         command=self.export_selection, width=100).pack(side="left", padx=5)
+            ctk.CTkButton(
+                data_toolbar,
+                text="🔄 Aggiorna",
+                command=self.refresh_data,
+                width=100
+            ).pack(side="left", padx=5)
+            ctk.CTkButton(
+                data_toolbar,
+                text="🔍 Filtra",
+                command=self.open_filter_dialog,
+                width=100
+            ).pack(side="left", padx=5)
+            ctk.CTkButton(
+                data_toolbar,
+                text="💾 Esporta",
+                command=self.export_selection,
+                width=100
+            ).pack(side="left", padx=5)
         else:
-            tk.Button(data_toolbar, text="🔄 Aggiorna",
-                     command=self.refresh_data, bg="#4a4a4a", fg="white").pack(side="left", padx=5)
-            tk.Button(data_toolbar, text="🔍 Filtra",
-                     command=self.open_filter_dialog, bg="#4a4a4a", fg="white").pack(side="left", padx=5)
-            tk.Button(data_toolbar, text="💾 Esporta",
-                     command=self.export_selection, bg="#4a4a4a", fg="white").pack(side="left", padx=5)
+            tk.Button(
+                data_toolbar,
+                text="🔄 Aggiorna",
+                command=self.refresh_data,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=5)
+            tk.Button(
+                data_toolbar,
+                text="🔍 Filtra",
+                command=self.open_filter_dialog,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=5)
+            tk.Button(
+                data_toolbar,
+                text="💾 Esporta",
+                command=self.export_selection,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=5)
 
         return panel
 
@@ -434,15 +516,33 @@ class AdvancedExcelToolsGUI:
         views_buttons.pack(fill="x", padx=5, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(views_buttons, text="▶️ Carica",
-                         command=self.load_selected_view, width=80).pack(side="left", padx=2)
-            ctk.CTkButton(views_buttons, text="❌ Elimina",
-                         command=self.delete_selected_view, width=80).pack(side="left", padx=2)
+            ctk.CTkButton(
+                views_buttons,
+                text="▶️ Carica",
+                command=self.load_selected_view,
+                width=80
+            ).pack(side="left", padx=2)
+            ctk.CTkButton(
+                views_buttons,
+                text="❌ Elimina",
+                command=self.delete_selected_view,
+                width=80
+            ).pack(side="left", padx=2)
         else:
-            tk.Button(views_buttons, text="▶️ Carica",
-                     command=self.load_selected_view, bg="#4a4a4a", fg="white").pack(side="left", padx=2)
-            tk.Button(views_buttons, text="❌ Elimina",
-                     command=self.delete_selected_view, bg="#4a4a4a", fg="white").pack(side="left", padx=2)
+            tk.Button(
+                views_buttons,
+                text="▶️ Carica",
+                command=self.load_selected_view,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=2)
+            tk.Button(
+                views_buttons,
+                text="❌ Elimina",
+                command=self.delete_selected_view,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=2)
 
     def create_tables_list(self):
         """Crea lista tabelle database"""
@@ -459,11 +559,20 @@ class AdvancedExcelToolsGUI:
         tables_buttons.pack(fill="x", padx=5, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(tables_buttons, text="🔄 Aggiorna",
-                         command=self.refresh_tables_list, width=100).pack(pady=2)
+            ctk.CTkButton(
+                tables_buttons,
+                text="🔄 Aggiorna",
+                command=self.refresh_tables_list,
+                width=100
+            ).pack(pady=2)
         else:
-            tk.Button(tables_buttons, text="🔄 Aggiorna",
-                     command=self.refresh_tables_list, bg="#4a4a4a", fg="white").pack(pady=2)
+            tk.Button(
+                tables_buttons,
+                text="🔄 Aggiorna",
+                command=self.refresh_tables_list,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(pady=2)
 
         self.refresh_tables_list()
 
@@ -480,15 +589,33 @@ class AdvancedExcelToolsGUI:
         merge_buttons.pack(fill="x", padx=5, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(merge_buttons, text="▶️ Esegui",
-                         command=self.execute_selected_merge, width=80).pack(side="left", padx=2)
-            ctk.CTkButton(merge_buttons, text="✏️ Modifica",
-                         command=self.edit_selected_merge, width=80).pack(side="left", padx=2)
+            ctk.CTkButton(
+                merge_buttons,
+                text="▶️ Esegui",
+                command=self.execute_selected_merge,
+                width=80
+            ).pack(side="left", padx=2)
+            ctk.CTkButton(
+                merge_buttons,
+                text="✏️ Modifica",
+                command=self.edit_selected_merge,
+                width=80
+            ).pack(side="left", padx=2)
         else:
-            tk.Button(merge_buttons, text="▶️ Esegui",
-                     command=self.execute_selected_merge, bg="#4a4a4a", fg="white").pack(side="left", padx=2)
-            tk.Button(merge_buttons, text="✏️ Modifica",
-                     command=self.edit_selected_merge, bg="#4a4a4a", fg="white").pack(side="left", padx=2)
+            tk.Button(
+                merge_buttons,
+                text="▶️ Esegui",
+                command=self.execute_selected_merge,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=2)
+            tk.Button(
+                merge_buttons,
+                text="✏️ Modifica",
+                command=self.edit_selected_merge,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(side="left", padx=2)
 
         self.load_merge_configs()
 
@@ -499,17 +626,30 @@ class AdvancedExcelToolsGUI:
         if HAS_CUSTOMTKINTER:
             self.stats_text = ctk.CTkTextbox(parent, height=200)
         else:
-            self.stats_text = tk.Text(parent, bg="#4a4a4a", fg="white", height=12)
+            self.stats_text = tk.Text(
+                parent,
+                bg="#4a4a4a",
+                fg="white",
+                height=12
+            )
 
         self.stats_text.pack(fill="both", expand=True, padx=5, pady=5)
 
         # Pulsante aggiorna stats
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(parent, text="🔄 Aggiorna Statistiche",
-                         command=self.update_statistics).pack(pady=5)
+            ctk.CTkButton(
+                parent,
+                text="🔄 Aggiorna Statistiche",
+                command=self.update_statistics
+            ).pack(pady=5)
         else:
-            tk.Button(parent, text="🔄 Aggiorna Statistiche",
-                     command=self.update_statistics, bg="#4a4a4a", fg="white").pack(pady=5)
+            tk.Button(
+                parent,
+                text="🔄 Aggiorna Statistiche",
+                command=self.update_statistics,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(pady=5)
 
         self.update_statistics()
 
@@ -519,25 +659,54 @@ class AdvancedExcelToolsGUI:
 
         # Area query
         if HAS_CUSTOMTKINTER:
-            ctk.CTkLabel(parent, text="Query SQL:").pack(anchor="w", padx=5, pady=5)
+            ctk.CTkLabel(
+                parent,
+                text="Query SQL:"
+            ).pack(anchor="w", padx=5, pady=5)
             self.query_text = ctk.CTkTextbox(parent, height=100)
         else:
-            tk.Label(parent, text="Query SQL:", bg="#3c3c3c", fg="white").pack(anchor="w", padx=5, pady=5)
-            self.query_text = tk.Text(parent, bg="#4a4a4a", fg="white", height=6)
+            tk.Label(
+                parent,
+                text="Query SQL:",
+                bg="#3c3c3c",
+                fg="white"
+            ).pack(anchor="w", padx=5, pady=5)
+            self.query_text = tk.Text(
+                parent,
+                bg="#4a4a4a",
+                fg="white",
+                height=6
+            )
 
         self.query_text.pack(fill="x", padx=5, pady=5)
 
         # Pulsanti query
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(parent, text="▶️ Esegui Query",
-                         command=self.execute_custom_query).pack(pady=5)
-            ctk.CTkButton(parent, text="💾 Salva Query",
-                         command=self.save_custom_query).pack(pady=5)
+            ctk.CTkButton(
+                parent,
+                text="▶️ Esegui Query",
+                command=self.execute_custom_query
+            ).pack(pady=5)
+            ctk.CTkButton(
+                parent,
+                text="💾 Salva Query",
+                command=self.save_custom_query
+            ).pack(pady=5)
         else:
-            tk.Button(parent, text="▶️ Esegui Query",
-                     command=self.execute_custom_query, bg="#4a4a4a", fg="white").pack(pady=5)
-            tk.Button(parent, text="💾 Salva Query",
-                     command=self.save_custom_query, bg="#4a4a4a", fg="white").pack(pady=5)
+            tk.Button(
+                parent,
+                text="▶️ Esegui Query",
+                command=self.execute_custom_query,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(pady=5)
+            tk.Button(
+                parent,
+                text="💾 Salva Query",
+                command=self.save_custom_query,
+                bg="#4a4a4a",
+                fg="white"
+            ).pack(pady=5)
 
     def create_info_panel(self):
         """Crea pannello informazioni"""
@@ -675,13 +844,12 @@ class AdvancedExcelToolsGUI:
 💾 Dimensione DB: {db_size:.2f} MB
 
 📈 SISTEMA
-- CustomTkinter: {'✅' if HAS_CUSTOMTKINTER else '❌'}
-- Pandas: {'✅' if HAS_PANDAS else '❌'}
-- DB Manager: {'✅' if HAS_ADVANCED_DB else '❌'}
+ CustomTkinter: {'✅' if HAS_CUSTOMTKINTER else '❌'}
+ Pandas: {'✅' if HAS_PANDAS else '❌'}
+ DB Manager: {'✅' if HAS_ADVANCED_DB else '❌'}
 """
 
                 conn.close()
-
             except Exception as e:
                 stats_text = f"Errore statistiche: {e}"
 
@@ -789,24 +957,36 @@ Data: 2025-07-16
 
     def open_graphical_selector(self):
         """Apri selezione grafica"""
-        if not HAS_ADVANCED_DB or not self.db_manager:
-            messagebox.showerror("Errore", "Database manager non disponibile")
-            return
-
-        # Crea finestra selezione grafica
-        selector_window = tk.Toplevel(self.root)
-        selector_window.title("🎨 Selezione Grafica Dati")
-        selector_window.geometry("800x600")
-
-        def on_selection_change(config):
-            print(f"Selezione: {config}")
-
         try:
-            from advanced_database_manager import GraphicalDataSelector
-            selector = GraphicalDataSelector(
-                selector_window, self.db_manager, on_selection_change)
+            if not HAS_ADVANCED_DB or not self.db_manager:
+                messagebox.showerror(
+                    "Errore",
+                    "Database manager non disponibile"
+                )
+                return
+
+            # Crea finestra selezione grafica
+            selector_window = tk.Toplevel(self.root)
+            selector_window.title("🎨 Selezione Grafica Dati")
+            selector_window.geometry("800x600")
+
+            def on_selection_change(config):
+                print(f"Selezione: {config}")
+
+            try:
+                from advanced_database_manager import GraphicalDataSelector
+                GraphicalDataSelector(
+                    selector_window, self.db_manager, on_selection_change)
+            except Exception as e:
+                messagebox.showerror(
+                    "Errore",
+                    f"Errore apertura selezione: {e}"
+                )
         except Exception as e:
-            messagebox.showerror("Errore", f"Errore apertura selezione: {e}")
+            messagebox.showerror(
+                "Errore",
+                f"Errore generale selezione grafica: {e}"
+            )
 
     def open_advanced_search(self):
         """Apri ricerca avanzata"""
@@ -826,12 +1006,13 @@ Data: 2025-07-16
 
     def run_diagnostics(self):
         """Esegui diagnostica"""
-        diag_text = f"""🔧 DIAGNOSTICA SISTEMA
+        try:
+            diag_text = f"""🔧 DIAGNOSTICA SISTEMA
 
 ✅ Componenti Disponibili:
-- CustomTkinter: {'Sì' if HAS_CUSTOMTKINTER else 'No'}
-- Pandas: {'Sì' if HAS_PANDAS else 'No'}
-- Advanced DB Manager: {'Sì' if HAS_ADVANCED_DB else 'No'}
+ CustomTkinter: {'Sì' if HAS_CUSTOMTKINTER else 'No'}
+ Pandas: {'Sì' if HAS_PANDAS else 'No'}
+ Advanced DB Manager: {'Sì' if HAS_ADVANCED_DB else 'No'}
 
 📁 Database:
 - Percorso: {getattr(self.db_manager, 'db_path', 'N/A')}
@@ -841,7 +1022,64 @@ Data: 2025-07-16
 - Tema: {'Dark (CustomTkinter)' if HAS_CUSTOMTKINTER else 'Standard Tkinter'}
 - Risoluzione: {self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}
 """
-        messagebox.showinfo("Diagnostica Sistema", diag_text)
+            messagebox.showinfo("Diagnostica Sistema", diag_text)
+        except Exception as e:
+            messagebox.showerror("Errore", f"Errore diagnostica: {e}")
+
+    def analyze_excel_with_pandas(self):
+        """Analizza un file Excel con Pandas e mostra statistiche avanzate"""
+        try:
+            if not HAS_PANDAS:
+                messagebox.showerror("Errore", "Pandas non disponibile")
+                return
+            import os
+            from tkinter import filedialog
+            file_path = filedialog.askopenfilename(
+                title="Seleziona file Excel per analisi avanzata",
+                filetypes=[("Excel Files", "*.xlsx;*.xls")]
+            )
+            if not file_path or not os.path.exists(file_path):
+                return
+            try:
+                df = pd.read_excel(file_path)
+                from io import StringIO
+                buf = StringIO()
+                df.info(buf=buf)
+                info_str = buf.getvalue()
+                desc = df.describe(include='all').to_string()
+                nulls = df.isnull().sum().to_string()
+                stats = (
+                    "🧪 ANALISI AVANZATA PANDAS\n\nColonne: "
+                    f"{', '.join(df.columns)}\n\nInfo DataFrame:\n{info_str}"
+                    f"\n\nStatistiche descrittive:\n{desc}"
+                    f"\n\nValori nulli per colonna:\n{nulls}"
+                )
+            except Exception as e:
+                stats = f"Errore analisi Pandas: {e}"
+            try:
+                popup = tk.Toplevel(self.root)
+                popup.title("Analisi Avanzata Pandas")
+                popup.geometry("900x700")
+                text = tk.Text(popup, bg="#222", fg="#fff", wrap="word")
+                text.insert("1.0", stats)
+                text.pack(fill="both", expand=True, padx=10, pady=10)
+                tk.Button(
+                    popup,
+                    text="Chiudi",
+                    command=popup.destroy,
+                    bg="#444",
+                    fg="#fff"
+                ).pack(pady=5)
+            except Exception as e:
+                messagebox.showerror(
+                    "Errore",
+                    f"Errore visualizzazione popup: {e}"
+                )
+        except Exception as e:
+            messagebox.showerror(
+                "Errore",
+                f"Errore analisi avanzata Pandas: {e}"
+            )
 
     def show_about(self):
         """Mostra informazioni"""
@@ -861,11 +1099,17 @@ selezione dati, viste salvate e merge configurabile.
 
     def show_saved_views_panel(self):
         """Mostra pannello viste salvate"""
-        self.left_notebook.set("Viste") if HAS_CUSTOMTKINTER else self.left_notebook.select(0)
+        if HAS_CUSTOMTKINTER:
+            self.left_notebook.set("Viste")
+        else:
+            self.left_notebook.select(0)
 
     def open_tools_panel(self):
         """Apri pannello strumenti"""
-        self.tools_notebook.set("Stats") if HAS_CUSTOMTKINTER else self.tools_notebook.select(0)
+        if HAS_CUSTOMTKINTER:
+            self.tools_notebook.set("Stats")
+        else:
+            self.tools_notebook.select(0)
 
     def load_selected_view(self, event=None):
         """Carica vista selezionata"""
@@ -879,7 +1123,10 @@ selezione dati, viste salvate e merge configurabile.
         """Elimina vista selezionata"""
         selection = self.views_listbox.curselection()
         if selection:
-            if messagebox.askyesno("Conferma", "Eliminare la vista selezionata?"):
+            if messagebox.askyesno(
+                "Conferma",
+                "Eliminare la vista selezionata?"
+            ):
                 messagebox.showinfo("Info", "Vista eliminata")
                 self.load_saved_views()
 

@@ -13,6 +13,7 @@ Versione: 2.0 - AI Enhanced
 
 import os
 import sqlite3
+import json
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import threading
@@ -115,17 +116,10 @@ class ExcelToolsUnified:
 
         # Configura colori scuri
         self.style.configure("TFrame", background="#2d2d2d")
-        self.style.configure(
-            "TLabel",
-            background="#2d2d2d",
-            foreground="white")
-        self.style.configure(
-            "TButton",
-            background="#404040",
-            foreground="white")
-        self.style.map(
-            "TButton", background=[
-                ('active', '#505050'), ('pressed', '#303030')])
+        self.style.configure("TLabel", background="#2d2d2d", foreground="white")
+        self.style.configure("TButton", background="#404040", foreground="white")
+        self.style.map("TButton",
+                      background=[('active', '#505050'), ('pressed', '#303030')])
 
     def create_menu(self):
         """Crea il menu principale"""
@@ -136,9 +130,9 @@ class ExcelToolsUnified:
         file_menu = tk.Menu(menubar, tearoff=0, bg="#2d2d2d", fg="white")
         menubar.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Import Single File...",
-                              command=self.import_excel)
+                             command=self.import_excel)
         file_menu.add_command(label="Import Multiple Files...",
-                              command=self.import_multiple)
+                             command=self.import_multiple)
         file_menu.add_separator()
         file_menu.add_command(label="Export Data...", command=self.export_data)
         file_menu.add_separator()
@@ -148,10 +142,8 @@ class ExcelToolsUnified:
         tools_menu = tk.Menu(menubar, tearoff=0, bg="#2d2d2d", fg="white")
         menubar.add_cascade(label="Tools", menu=tools_menu)
         tools_menu.add_command(label="AI Query Builder",
-                               command=self.open_ai_query_builder)
-        tools_menu.add_command(
-            label="Statistics",
-            command=self.show_statistics)
+                              command=self.open_ai_query_builder)
+        tools_menu.add_command(label="Statistics", command=self.show_statistics)
         tools_menu.add_command(label="Filters", command=self.toggle_filters)
 
     def create_toolbar(self):
@@ -164,22 +156,18 @@ class ExcelToolsUnified:
         import_frame.pack(side="left", padx=5)
 
         ttk.Button(import_frame, text="📂 Single File",
-                   command=self.import_excel).pack(side="left", padx=2)
+                  command=self.import_excel).pack(side="left", padx=2)
         ttk.Button(import_frame, text="📂+ Multi Import",
-                   command=self.import_multiple).pack(side="left", padx=2)
+                  command=self.import_multiple).pack(side="left", padx=2)
 
         # Analysis section
         analysis_frame = ttk.LabelFrame(toolbar, text="Analysis", padding=5)
         analysis_frame.pack(side="left", padx=5)
 
-        ttk.Button(
-            analysis_frame,
-            text="⚡ AI Query",
-            command=self.open_ai_query_builder).pack(
-            side="left",
-            padx=2)
+        ttk.Button(analysis_frame, text="⚡ AI Query",
+                  command=self.open_ai_query_builder).pack(side="left", padx=2)
         ttk.Button(analysis_frame, text="📊 Stats",
-                   command=self.show_statistics).pack(side="left", padx=2)
+                  command=self.show_statistics).pack(side="left", padx=2)
 
         # Status
         self.connection_status = ttk.Label(toolbar, text="🟢 Ready")
@@ -198,12 +186,12 @@ class ExcelToolsUnified:
 
         # Scrollbars
         v_scrollbar = ttk.Scrollbar(tree_frame, orient="vertical",
-                                    command=self.tree.yview)
+                                   command=self.tree.yview)
         h_scrollbar = ttk.Scrollbar(tree_frame, orient="horizontal",
-                                    command=self.tree.xview)
+                                   command=self.tree.xview)
 
         self.tree.configure(yscrollcommand=v_scrollbar.set,
-                            xscrollcommand=h_scrollbar.set)
+                           xscrollcommand=h_scrollbar.set)
 
         # Pack treeview e scrollbars
         self.tree.pack(side="left", fill="both", expand=True)
@@ -234,7 +222,7 @@ class ExcelToolsUnified:
         try:
             if not HAS_PANDAS:
                 messagebox.showerror("Error",
-                                     "Pandas required for file operations")
+                                   "Pandas required for file operations")
                 return
 
             # Determina il tipo di file e carica
@@ -286,11 +274,11 @@ class ExcelToolsUnified:
         max_rows = min(1000, len(df))
         for i in range(max_rows):
             row_data = [str(df.iloc[i, j]) for j in range(len(df.columns))]
-            self.tree.insert("", "end", text=str(i + 1), values=row_data)
+            self.tree.insert("", "end", text=str(i+1), values=row_data)
 
         if len(df) > max_rows:
             self.tree.insert("", "end", text="...",
-                             values=["..." for _ in df.columns])
+                           values=["..." for _ in df.columns])
 
     def import_multiple(self):
         """Importa file multipli"""
@@ -311,7 +299,7 @@ class ExcelToolsUnified:
         """Apre il AI Query Builder"""
         if self.current_data is None:
             messagebox.showwarning("Warning",
-                                   "Please import data first")
+                                 "Please import data first")
             return
 
         # Crea finestra AI Query Builder
@@ -322,11 +310,11 @@ class ExcelToolsUnified:
 
         # Input per linguaggio naturale
         input_frame = ttk.LabelFrame(ai_window, text="Natural Language Input",
-                                     padding=10)
+                                   padding=10)
         input_frame.pack(fill="x", padx=10, pady=10)
 
         ttk.Label(input_frame,
-                  text="Describe what you want to analyze:").pack(anchor="w")
+                 text="Describe what you want to analyze:").pack(anchor="w")
 
         self.ai_input = tk.Text(input_frame, height=3, wrap="word")
         self.ai_input.pack(fill="x", pady=5)
@@ -336,26 +324,26 @@ class ExcelToolsUnified:
         button_frame.pack(fill="x", pady=5)
 
         ttk.Button(button_frame, text="🧠 Generate Query",
-                   command=self.generate_ai_query).pack(side="left", padx=5)
+                  command=self.generate_ai_query).pack(side="left", padx=5)
         ttk.Button(button_frame, text="▶️ Execute",
-                   command=self.execute_ai_query).pack(side="left", padx=5)
+                  command=self.execute_ai_query).pack(side="left", padx=5)
 
         # Output query
         output_frame = ttk.LabelFrame(ai_window, text="Generated Query",
-                                      padding=10)
+                                    padding=10)
         output_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         self.query_output = tk.Text(output_frame, wrap="none",
-                                    font=("Consolas", 10))
+                                   font=("Consolas", 10))
 
         # Scrollbars per output
         output_scroll_v = ttk.Scrollbar(output_frame, orient="vertical",
-                                        command=self.query_output.yview)
+                                      command=self.query_output.yview)
         output_scroll_h = ttk.Scrollbar(output_frame, orient="horizontal",
-                                        command=self.query_output.xview)
+                                      command=self.query_output.xview)
 
         self.query_output.configure(yscrollcommand=output_scroll_v.set,
-                                    xscrollcommand=output_scroll_h.set)
+                                   xscrollcommand=output_scroll_h.set)
 
         self.query_output.pack(side="left", fill="both", expand=True)
         output_scroll_v.pack(side="right", fill="y")
@@ -367,7 +355,7 @@ class ExcelToolsUnified:
 
         if not user_input:
             messagebox.showwarning("Warning",
-                                   "Please describe what you want to analyze")
+                                 "Please describe what you want to analyze")
             return
 
         # Genera query usando AI
@@ -376,13 +364,11 @@ class ExcelToolsUnified:
         if generated_query:
             self.query_output.delete("1.0", "end")
             self.query_output.insert("1.0", generated_query)
-            messagebox.showinfo(
-                "AI Query Generated",
-                "Query generated successfully! Review and execute.")
+            messagebox.showinfo("AI Query Generated",
+                              "Query generated successfully! Review and execute.")
         else:
-            messagebox.showwarning(
-                "AI Generation",
-                "Could not generate query. Try using more specific terms.")
+            messagebox.showwarning("AI Generation",
+                                 "Could not generate query. Try using more specific terms.")
 
     def ai_query_interpreter(self, user_input):
         """🤖 AI INTELLIGENTE - Interpreta linguaggio naturale e genera SQL"""
@@ -402,15 +388,10 @@ class ExcelToolsUnified:
             # AI semplificata integrata
             input_lower = user_input.lower().strip()
             columns = list(self.current_data.columns)
-            table_name = list(self.imported_files.keys())[
-                0] if self.imported_files else 'data'
+            table_name = list(self.imported_files.keys())[0] if self.imported_files else 'data'
 
             # Pattern base per selezione colonne
-            if any(
-                word in input_lower for word in [
-                    'mostra',
-                    'show',
-                    'seleziona']):
+            if any(word in input_lower for word in ['mostra', 'show', 'seleziona']):
                 mentioned_cols = []
                 for col in columns:
                     if col.lower() in input_lower:
@@ -418,8 +399,7 @@ class ExcelToolsUnified:
 
                 if mentioned_cols:
                     cols_str = ", ".join(f"[{col}]" for col in mentioned_cols)
-                    return f"-- Mostra colonne: {
-                        ', '.join(mentioned_cols)}\nSELECT {cols_str} FROM [{table_name}];"
+                    return f"-- Mostra colonne: {', '.join(mentioned_cols)}\nSELECT {cols_str} FROM [{table_name}];"
                 else:
                     return f"-- Mostra tutti i dati\nSELECT * FROM [{table_name}];"
 
@@ -437,17 +417,17 @@ class ExcelToolsUnified:
 
         if not query:
             messagebox.showwarning("Warning",
-                                   "Please enter or generate a query first")
+                                 "Please enter or generate a query first")
             return
 
         try:
             # Questo è un esempio - implementa l'esecuzione SQL sui dati
             messagebox.showinfo("Query Execution",
-                                "Query execution feature coming soon!")
+                              "Query execution feature coming soon!")
 
         except Exception as e:
             messagebox.showerror("Query Error",
-                                 f"Error executing query:\n{str(e)}")
+                               f"Error executing query:\n{str(e)}")
 
     def show_statistics(self):
         """Mostra statistiche dei dati"""
@@ -476,11 +456,7 @@ class ExcelToolsUnified:
         stats_info.append("📊 DATASET OVERVIEW")
         stats_info.append("=" * 50)
         stats_info.append(f"Shape: {df.shape[0]} rows × {df.shape[1]} columns")
-        stats_info.append(
-            f"Memory usage: {
-                df.memory_usage(
-                    deep=True).sum() /
-                1024:.2f} KB")
+        stats_info.append(f"Memory usage: {df.memory_usage(deep=True).sum() / 1024:.2f} KB")
         stats_info.append("")
 
         stats_info.append("📋 COLUMN INFORMATION")
@@ -489,8 +465,7 @@ class ExcelToolsUnified:
             dtype = str(df[col].dtype)
             null_count = df[col].isnull().sum()
             unique_count = df[col].nunique()
-            stats_info.append(
-                f"{col}: {dtype} | Nulls: {null_count} | Unique: {unique_count}")
+            stats_info.append(f"{col}: {dtype} | Nulls: {null_count} | Unique: {unique_count}")
 
         stats_info.append("")
         stats_info.append("📈 NUMERIC STATISTICS")
@@ -503,9 +478,7 @@ class ExcelToolsUnified:
 
     def toggle_filters(self):
         """Attiva/disattiva i filtri"""
-        messagebox.showinfo(
-            "Filters",
-            "Advanced filtering feature coming soon!")
+        messagebox.showinfo("Filters", "Advanced filtering feature coming soon!")
 
     def export_data(self):
         """Esporta i dati correnti"""

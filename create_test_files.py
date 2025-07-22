@@ -55,7 +55,7 @@ def create_sample_excel_files():
     inventory_data = {
         'Codice_Prodotto': [
             f'PROD_{i:04d}'
-            for i in range(1, len(products) * 50)
+            for i in range(1, len(products) * 49 + 1)
         ],
         'Nome_Prodotto': np.random.choice(
             products,

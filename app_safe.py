@@ -9,13 +9,12 @@ import sqlite3
 import threading
 import logging
 from datetime import datetime
-from typing import List, Dict
+# from typing import List, Dict
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 try:
     import pandas as pd
-    import numpy as np
     HAS_PANDAS = True
 except ImportError:
     HAS_PANDAS = False

@@ -158,9 +158,15 @@ class AdvancedDatabaseManager:
             print(f"Errore recupero viste: {e}")
             return []
 
-    def save_merge_config(self, name: str, source_tables: List[str],
-                         join_conditions: List[Dict], merge_type: str,
-                         output_columns: List[str], description: str = "") -> bool:
+    def save_merge_config(
+        self,
+        name: str,
+        source_tables: List[str],
+        join_conditions: List[Dict],
+        merge_type: str,
+        output_columns: List[str],
+        description: str = ""
+    ) -> bool:
         """Salva configurazione merge"""
         try:
             conn = sqlite3.connect(self.db_path)
@@ -179,16 +185,22 @@ class AdvancedDatabaseManager:
 
             conn.commit()
             conn.close()
-            return True
-
-        except Exception as e:
-            print(f"Errore salvataggio config merge: {e}")
-            return False
-
-    def get_merge_configs(self) -> List[Dict[str, Any]]:
-        """Ottiene configurazioni merge salvate"""
-        try:
-            conn = sqlite3.connect(self.db_path)
+            cursor.execute(
+                """
+                INSERT OR REPLACE INTO merge_configs
+                (name, description, source_tables, join_conditions,
+                 merge_type, output_columns)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    name,
+                    description,
+                    json.dumps(source_tables),
+                    json.dumps(join_conditions),
+                    merge_type,
+                    json.dumps(output_columns)
+                )
+            )
             cursor = conn.cursor()
 
             cursor.execute("""
@@ -226,7 +238,7 @@ class AdvancedDatabaseManager:
 
             source_tables = config['source_tables']
             join_conditions = config['join_conditions']
-            merge_type = config['merge_type']
+            # merge_type = config['merge_type']  # Unused variable removed
 
             if len(source_tables) < 2:
                 raise Exception("Almeno 2 tabelle richieste per merge")
@@ -261,7 +273,7 @@ class AdvancedDatabaseManager:
             # Filtra colonne output se specificate
             output_columns = config.get('output_columns')
             if output_columns and all(col in df_result.columns
-                                    for col in output_columns):
+                                      for col in output_columns):
                 df_result = df_result[output_columns]
 
             return df_result
@@ -271,8 +283,8 @@ class AdvancedDatabaseManager:
             return None
 
     def build_query_from_config(self, table_name: str,
-                               selected_columns: List[str],
-                               filters: List[Dict]) -> str:
+                                selected_columns: List[str],
+                                filters: List[Dict]) -> str:
         """Costruisce query SQL da configurazione visuale"""
         # Seleziona colonne
         if selected_columns:
@@ -315,12 +327,15 @@ class AdvancedDatabaseManager:
             cursor = conn.cursor()
 
             # Lista tabelle utente
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT name FROM sqlite_master
                 WHERE type='table' AND name NOT LIKE 'sqlite_%'
-                AND name NOT IN ('saved_views', 'merge_configs', 'filter_presets')
+                AND name NOT IN ('saved_views', 'merge_configs',
+                                'filter_presets')
                 ORDER BY name
-            """)
+                """
+            )
 
             tables = []
             for (table_name,) in cursor.fetchall():
@@ -359,8 +374,11 @@ class AdvancedDatabaseManager:
             print(f"Errore get tables details: {e}")
             return []
 
-    def get_column_unique_values(self, table_name: str,
-                                column_name: str, limit: int = 100) -> List[str]:
+    def get_column_unique_values(
+            self,
+            table_name: str,
+            column_name: str,
+            limit: int = 100) -> List[str]:
         """Ottiene valori unici di una colonna per filtri"""
         try:
             conn = sqlite3.connect(self.db_path)
@@ -383,7 +401,7 @@ class AdvancedDatabaseManager:
             return []
 
     def export_view_to_excel(self, data: pd.DataFrame, file_path: str,
-                            view_name: str = "Data") -> bool:
+                             view_name: str = "Data") -> bool:
         """Esporta vista in Excel con formattazione"""
         try:
             if not HAS_PANDAS:
@@ -393,7 +411,7 @@ class AdvancedDatabaseManager:
                 data.to_excel(writer, sheet_name=view_name, index=False)
 
                 # Formattazione base
-                workbook = writer.book
+                # workbook = writer.book  # Unused variable removed
                 worksheet = writer.sheets[view_name]
 
                 # Auto-width colonne
@@ -404,7 +422,9 @@ class AdvancedDatabaseManager:
                         if len(str(cell.value)) > max_length:
                             max_length = len(str(cell.value))
                     adjusted_width = min(max_length + 2, 50)
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
+                    worksheet.column_dimensions[column_letter].width = (
+                        adjusted_width
+                    )
 
             return True
 
@@ -476,12 +496,27 @@ class GraphicalDataSelector:
         table_frame.pack(fill="x", padx=10, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkLabel(table_frame, text="📋 Seleziona Tabella:",
-                        font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
+            ctk.CTkLabel(
+                table_frame,
+                text="📋 Seleziona Tabella:",
+                font=ctk.CTkFont(
+                    weight="bold")).pack(
+                anchor="w",
+                padx=10,
+                pady=5)
         else:
-            tk.Label(table_frame, text="📋 Seleziona Tabella:",
-                    font=("Arial", 10, "bold"),
-                    bg="#3c3c3c", fg="white").pack(anchor="w", padx=10, pady=5)
+            tk.Label(
+                table_frame,
+                text="📋 Seleziona Tabella:",
+                font=(
+                    "Arial",
+                    10,
+                    "bold"),
+                bg="#3c3c3c",
+                fg="white").pack(
+                anchor="w",
+                padx=10,
+                pady=5)
 
         # Combo tabelle
         self.table_var = tk.StringVar()
@@ -494,7 +529,9 @@ class GraphicalDataSelector:
             self.table_combo = ttk.Combobox(
                 table_frame, textvariable=self.table_var, width=40
             )
-            self.table_combo.bind("<<ComboboxSelected>>", self.on_table_selected)
+            self.table_combo.bind(
+                "<<ComboboxSelected>>",
+                self.on_table_selected)
 
         self.table_combo.pack(padx=10, pady=5)
 
@@ -502,7 +539,8 @@ class GraphicalDataSelector:
         if HAS_CUSTOMTKINTER:
             self.table_info = ctk.CTkTextbox(table_frame, height=60)
         else:
-            self.table_info = tk.Text(table_frame, height=3, bg="#4a4a4a", fg="white")
+            self.table_info = tk.Text(
+                table_frame, height=3, bg="#4a4a4a", fg="white")
         self.table_info.pack(fill="x", padx=10, pady=5)
 
         self.load_tables()
@@ -516,12 +554,27 @@ class GraphicalDataSelector:
         col_frame.pack(fill="x", padx=10, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkLabel(col_frame, text="🔢 Seleziona Colonne:",
-                        font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
+            ctk.CTkLabel(
+                col_frame,
+                text="🔢 Seleziona Colonne:",
+                font=ctk.CTkFont(
+                    weight="bold")).pack(
+                anchor="w",
+                padx=10,
+                pady=5)
         else:
-            tk.Label(col_frame, text="🔢 Seleziona Colonne:",
-                    font=("Arial", 10, "bold"),
-                    bg="#3c3c3c", fg="white").pack(anchor="w", padx=10, pady=5)
+            tk.Label(
+                col_frame,
+                text="🔢 Seleziona Colonne:",
+                font=(
+                    "Arial",
+                    10,
+                    "bold"),
+                bg="#3c3c3c",
+                fg="white").pack(
+                anchor="w",
+                padx=10,
+                pady=5)
 
         # Frame per checkboxes colonne
         self.columns_frame = tk.Frame(col_frame, bg="#3c3c3c")
@@ -532,15 +585,33 @@ class GraphicalDataSelector:
         buttons_frame.pack(fill="x", padx=10, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(buttons_frame, text="Seleziona Tutto",
-                         command=self.select_all_columns, width=120).pack(side="left", padx=5)
-            ctk.CTkButton(buttons_frame, text="Deseleziona Tutto",
-                         command=self.deselect_all_columns, width=120).pack(side="left", padx=5)
+            ctk.CTkButton(
+                buttons_frame,
+                text="Seleziona Tutto",
+                command=self.select_all_columns,
+                width=120).pack(
+                side="left",
+                padx=5)
+            ctk.CTkButton(
+                buttons_frame,
+                text="Deseleziona Tutto",
+                command=self.deselect_all_columns,
+                width=120).pack(
+                side="left",
+                padx=5)
         else:
-            tk.Button(buttons_frame, text="Seleziona Tutto",
-                     command=self.select_all_columns).pack(side="left", padx=5)
-            tk.Button(buttons_frame, text="Deseleziona Tutto",
-                     command=self.deselect_all_columns).pack(side="left", padx=5)
+            tk.Button(
+                buttons_frame,
+                text="Seleziona Tutto",
+                command=self.select_all_columns).pack(
+                side="left",
+                padx=5)
+            tk.Button(
+                buttons_frame,
+                text="Deseleziona Tutto",
+                command=self.deselect_all_columns).pack(
+                side="left",
+                padx=5)
 
     def create_filter_section(self):
         """Crea sezione filtri"""
@@ -551,34 +622,54 @@ class GraphicalDataSelector:
         filter_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkLabel(filter_frame, text="🔍 Filtri:",
-                        font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
+            ctk.CTkLabel(
+                filter_frame,
+                text="🔍 Filtri:",
+                font=ctk.CTkFont(
+                    weight="bold")).pack(
+                anchor="w",
+                padx=10,
+                pady=5)
         else:
-            tk.Label(filter_frame, text="🔍 Filtri:",
-                    font=("Arial", 10, "bold"),
-                    bg="#3c3c3c", fg="white").pack(anchor="w", padx=10, pady=5)
+            tk.Label(
+                filter_frame,
+                text="🔍 Filtri:",
+                font=(
+                    "Arial",
+                    10,
+                    "bold"),
+                bg="#3c3c3c",
+                fg="white").pack(
+                anchor="w",
+                padx=10,
+                pady=5)
 
         # Scrollable frame per filtri
         if HAS_CUSTOMTKINTER:
-            self.filters_scroll = ctk.CTkScrollableFrame(filter_frame, height=200)
+            self.filters_scroll = ctk.CTkScrollableFrame(
+                filter_frame, height=200)
         else:
             canvas = tk.Canvas(filter_frame, bg="#3c3c3c", height=200)
-            scrollbar = tk.Scrollbar(filter_frame, orient="vertical", command=canvas.yview)
+            scrollbar = tk.Scrollbar(
+                filter_frame,
+                orient="vertical",
+                command=canvas.yview)
             self.filters_scroll = tk.Frame(canvas, bg="#3c3c3c")
             canvas.configure(yscrollcommand=scrollbar.set)
             canvas.pack(side="left", fill="both", expand=True, padx=10)
             scrollbar.pack(side="right", fill="y")
-            canvas.create_window((0, 0), window=self.filters_scroll, anchor="nw")
+            canvas.create_window(
+                (0, 0), window=self.filters_scroll, anchor="nw")
 
         self.filters_scroll.pack(fill="both", expand=True, padx=10, pady=5)
 
         # Pulsante aggiungi filtro
         if HAS_CUSTOMTKINTER:
             ctk.CTkButton(filter_frame, text="➕ Aggiungi Filtro",
-                         command=self.add_filter, width=150).pack(pady=5)
+                          command=self.add_filter, width=150).pack(pady=5)
         else:
             tk.Button(filter_frame, text="➕ Aggiungi Filtro",
-                     command=self.add_filter).pack(pady=5)
+                      command=self.add_filter).pack(pady=5)
 
     def create_preview_section(self):
         """Crea sezione preview"""
@@ -589,12 +680,27 @@ class GraphicalDataSelector:
         preview_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkLabel(preview_frame, text="👁️ Preview:",
-                        font=ctk.CTkFont(weight="bold")).pack(anchor="w", padx=10, pady=5)
+            ctk.CTkLabel(
+                preview_frame,
+                text="👁️ Preview:",
+                font=ctk.CTkFont(
+                    weight="bold")).pack(
+                anchor="w",
+                padx=10,
+                pady=5)
         else:
-            tk.Label(preview_frame, text="👁️ Preview:",
-                    font=("Arial", 10, "bold"),
-                    bg="#3c3c3c", fg="white").pack(anchor="w", padx=10, pady=5)
+            tk.Label(
+                preview_frame,
+                text="👁️ Preview:",
+                font=(
+                    "Arial",
+                    10,
+                    "bold"),
+                bg="#3c3c3c",
+                fg="white").pack(
+                anchor="w",
+                padx=10,
+                pady=5)
 
         # Treeview per preview
         tree_frame = tk.Frame(preview_frame, bg="#3c3c3c")
@@ -604,7 +710,7 @@ class GraphicalDataSelector:
         self.preview_tree.pack(side="left", fill="both", expand=True)
 
         preview_scroll = ttk.Scrollbar(tree_frame, orient="vertical",
-                                      command=self.preview_tree.yview)
+                                       command=self.preview_tree.yview)
         preview_scroll.pack(side="right", fill="y")
         self.preview_tree.configure(yscrollcommand=preview_scroll.set)
 
@@ -617,19 +723,34 @@ class GraphicalDataSelector:
         actions_frame.pack(fill="x", padx=10, pady=10)
 
         if HAS_CUSTOMTKINTER:
-            ctk.CTkButton(actions_frame, text="🔄 Aggiorna Preview",
-                         command=self.update_preview, width=150).pack(side="left", padx=5)
-            ctk.CTkButton(actions_frame, text="💾 Salva Vista",
-                         command=self.save_current_view, width=150).pack(side="left", padx=5)
-            ctk.CTkButton(actions_frame, text="📊 Applica Selezione",
-                         command=self.apply_selection, width=150).pack(side="left", padx=5)
+            ctk.CTkButton(
+                actions_frame,
+                text="🔄 Aggiorna Preview",
+                command=self.update_preview,
+                width=150).pack(
+                side="left",
+                padx=5)
+            ctk.CTkButton(
+                actions_frame,
+                text="💾 Salva Vista",
+                command=self.save_current_view,
+                width=150).pack(
+                side="left",
+                padx=5)
+            ctk.CTkButton(
+                actions_frame,
+                text="📊 Applica Selezione",
+                command=self.apply_selection,
+                width=150).pack(
+                side="left",
+                padx=5)
         else:
             tk.Button(actions_frame, text="🔄 Aggiorna Preview",
-                     command=self.update_preview).pack(side="left", padx=5)
+                      command=self.update_preview).pack(side="left", padx=5)
             tk.Button(actions_frame, text="💾 Salva Vista",
-                     command=self.save_current_view).pack(side="left", padx=5)
+                      command=self.save_current_view).pack(side="left", padx=5)
             tk.Button(actions_frame, text="📊 Applica Selezione",
-                     command=self.apply_selection).pack(side="left", padx=5)
+                      command=self.apply_selection).pack(side="left", padx=5)
 
     def load_tables(self):
         """Carica lista tabelle"""
@@ -654,7 +775,7 @@ class GraphicalDataSelector:
 
         # Aggiorna info tabella
         info_text = (f"Righe: {table_data['row_count']:,}\n"
-                    f"Colonne: {len(table_data['columns'])}")
+                     f"Colonne: {len(table_data['columns'])}")
 
         if HAS_CUSTOMTKINTER:
             self.table_info.delete("1.0", tk.END)
@@ -684,12 +805,16 @@ class GraphicalDataSelector:
             self.column_vars[col['name']] = var
 
             frame = tk.Frame(self.columns_frame, bg="#3c3c3c")
-            frame.grid(row=i//3, column=i%3, padx=5, pady=2, sticky="w")
+            frame.grid(row=i // 3, column=i % 3, padx=5, pady=2, sticky="w")
 
             checkbox = tk.Checkbutton(
-                frame, text=f"{col['name']} ({col['type']})",
-                variable=var, command=self.on_column_selection_change,
-                bg="#3c3c3c", fg="white", selectcolor="#4a4a4a"
+                frame,
+                text=f"{col['name']} ({col['type']})",
+                variable=var,
+                command=self.on_column_selection_change,
+                bg="#3c3c3c",
+                fg="white",
+                selectcolor="#4a4a4a"
             )
             checkbox.pack(anchor="w")
 
@@ -718,8 +843,8 @@ class GraphicalDataSelector:
             return
 
         dialog = FilterDialog(self.parent, self.current_table,
-                             self.tables_data[self.current_table]['columns'],
-                             self.db_manager)
+                              self.tables_data[self.current_table]['columns'],
+                              self.db_manager)
         filter_config = dialog.get_filter()
 
         if filter_config:
@@ -741,19 +866,35 @@ class GraphicalDataSelector:
             filter_frame.pack(fill="x", pady=2)
 
             # Testo filtro
-            filter_text = (f"{filter_config['column']} "
-                          f"{filter_config['operator']} "
-                          f"{filter_config['value']}")
+            filter_text = (
+                f"{filter_config['column']} "
+                f"{filter_config['operator']} "
+                f"{filter_config['value']}"
+            )
 
             if HAS_CUSTOMTKINTER:
-                ctk.CTkLabel(filter_frame, text=filter_text).pack(side="left", padx=5)
-                ctk.CTkButton(filter_frame, text="❌", width=30,
-                             command=lambda idx=i: self.remove_filter(idx)).pack(side="right", padx=5)
+                ctk.CTkLabel(
+                    filter_frame,
+                    text=filter_text).pack(
+                    side="left",
+                    padx=5)
+                ctk.CTkButton(
+                    filter_frame,
+                    text="❌",
+                    width=30,
+                    command=lambda idx=i: self.remove_filter(idx)).pack(
+                    side="right",
+                    padx=5)
             else:
                 tk.Label(filter_frame, text=filter_text,
-                        bg="#4a4a4a", fg="white").pack(side="left", padx=5)
-                tk.Button(filter_frame, text="❌", width=3,
-                         command=lambda idx=i: self.remove_filter(idx)).pack(side="right", padx=5)
+                         bg="#4a4a4a", fg="white").pack(side="left", padx=5)
+                tk.Button(
+                    filter_frame,
+                    text="❌",
+                    width=3,
+                    command=lambda idx=i: self.remove_filter(idx)).pack(
+                    side="right",
+                    padx=5)
 
     def remove_filter(self, index):
         """Rimuove filtro"""
@@ -793,7 +934,9 @@ class GraphicalDataSelector:
 
                     # Inserisci dati
                     for _, row in df.iterrows():
-                        values = [str(val) if val is not None else "" for val in row]
+                        values = [
+                            str(val) if val is not None else "" for val in row
+                        ]
                         self.preview_tree.insert("", "end", values=values)
 
             conn.close()
@@ -855,17 +998,29 @@ class FilterDialog:
         # Selezione colonna
         tk.Label(self.dialog, text="Colonna:").pack(pady=5)
         self.column_var = tk.StringVar()
-        column_combo = ttk.Combobox(self.dialog, textvariable=self.column_var,
-                                   values=[col['name'] for col in self.columns])
+        column_combo = ttk.Combobox(
+            self.dialog, textvariable=self.column_var, values=[
+                col['name'] for col in self.columns])
         column_combo.pack(pady=5)
         column_combo.bind("<<ComboboxSelected>>", self.on_column_change)
 
         # Operatore
         tk.Label(self.dialog, text="Operatore:").pack(pady=5)
         self.operator_var = tk.StringVar(value="=")
-        operator_combo = ttk.Combobox(self.dialog, textvariable=self.operator_var,
-                                     values=["=", "!=", ">", "<", ">=", "<=",
-                                            "LIKE", "IN", "IS NULL", "IS NOT NULL"])
+        operator_combo = ttk.Combobox(
+            self.dialog,
+            textvariable=self.operator_var,
+            values=[
+                "=",
+                "!=",
+                ">",
+                "<",
+                ">=",
+                "<=",
+                "LIKE",
+                "IN",
+                "IS NULL",
+                "IS NOT NULL"])
         operator_combo.pack(pady=5)
 
         # Valore
@@ -885,14 +1040,25 @@ class FilterDialog:
         buttons_frame = tk.Frame(self.dialog)
         buttons_frame.pack(pady=10)
 
-        tk.Button(buttons_frame, text="OK", command=self.confirm).pack(side="left", padx=5)
-        tk.Button(buttons_frame, text="Annulla", command=self.cancel).pack(side="left", padx=5)
+        tk.Button(
+            buttons_frame,
+            text="OK",
+            command=self.confirm).pack(
+            side="left",
+            padx=5)
+        tk.Button(
+            buttons_frame,
+            text="Annulla",
+            command=self.cancel).pack(
+            side="left",
+            padx=5)
 
     def on_column_change(self, event=None):
         """Carica valori unici per colonna selezionata"""
         column = self.column_var.get()
         if column:
-            values = self.db_manager.get_column_unique_values(self.table_name, column)
+            values = self.db_manager.get_column_unique_values(
+                self.table_name, column)
 
             self.values_listbox.delete(0, tk.END)
             for value in values:
@@ -947,27 +1113,46 @@ class SaveViewDialog:
         self.dialog.grab_set()
 
         # Nome vista
-        tk.Label(self.dialog, text="Nome Vista:", font=("Arial", 10, "bold")).pack(pady=5)
+        tk.Label(
+            self.dialog,
+            text="Nome Vista:",
+            font=(
+                "Arial",
+                10,
+                "bold")).pack(
+            pady=5)
         self.name_entry = tk.Entry(self.dialog, width=40)
         self.name_entry.pack(pady=5)
 
         # Descrizione
-        tk.Label(self.dialog, text="Descrizione:", font=("Arial", 10, "bold")).pack(pady=5)
+        tk.Label(
+            self.dialog,
+            text="Descrizione:",
+            font=(
+                "Arial",
+                10,
+                "bold")).pack(
+            pady=5)
         self.desc_text = tk.Text(self.dialog, height=4, width=40)
         self.desc_text.pack(pady=5)
 
         # Checkbox preferiti
         self.favorite_var = tk.BooleanVar()
         tk.Checkbutton(self.dialog, text="Aggiungi ai preferiti",
-                      variable=self.favorite_var).pack(pady=5)
+                       variable=self.favorite_var).pack(pady=5)
 
         # Pulsanti
         buttons_frame = tk.Frame(self.dialog)
         buttons_frame.pack(pady=10)
 
         tk.Button(buttons_frame, text="Salva", command=self.save,
-                 font=("Arial", 10, "bold")).pack(side="left", padx=5)
-        tk.Button(buttons_frame, text="Annulla", command=self.cancel).pack(side="left", padx=5)
+                  font=("Arial", 10, "bold")).pack(side="left", padx=5)
+        tk.Button(
+            buttons_frame,
+            text="Annulla",
+            command=self.cancel).pack(
+            side="left",
+            padx=5)
 
     def save(self):
         """Salva configurazione"""
@@ -980,7 +1165,8 @@ class SaveViewDialog:
             }
             self.dialog.destroy()
         else:
-            messagebox.showwarning("Attenzione", "Inserisci un nome per la vista")
+            messagebox.showwarning(
+                "Attenzione", "Inserisci un nome per la vista")
 
     def cancel(self):
         """Annulla dialog"""

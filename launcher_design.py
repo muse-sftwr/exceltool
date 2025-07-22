@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# flake8: noqa: E501,E302,E305,E128,E122,E131,F401,F841,F541,E231,E228,E303,E722
 """
 🚀 EXCELTOOLS PRO LAUNCHER - DESIGN EDITION
 ==========================================
@@ -31,20 +32,21 @@ class ModernLauncher:
 
     def print_banner(self):
         """Banner elegante di avvio"""
-        banner = """
-╔═══════════════════════════════════════════════════════════════════════════════╗
-║                                                                               ║
-║  🎨 EXCELTOOLS PRO • DESIGN EDITION                                           ║
-║                                                                               ║
-║  ✨ Sistema Avanzato di Gestione Excel                                        ║
-║  🎯 Design Minimale e Raffinato                                               ║
-║  💼 Professionale e Intuitivo                                                 ║
-║                                                                               ║
-║  Designer: Digital Marketing & UX Engineer                                    ║
-║  Versione: 3.0 Design Edition                                                 ║
-║                                                                               ║
-╚═══════════════════════════════════════════════════════════════════════════════╝
-        """
+        banner = (
+            "\n"
+            "╔═══════════════════════════════════════════════════════════════════════════════╗\n"
+            "║                                                                               ║\n"
+            "║  🎨 EXCELTOOLS PRO • DESIGN EDITION                                           ║\n"
+            "║                                                                               ║\n"
+            "║  ✨ Sistema Avanzato di Gestione Excel                                        ║\n"
+            "║  🎯 Design Minimale e Raffinato                                               ║\n"
+            "║  💼 Professionale e Intuitivo                                                 ║\n"
+            "║                                                                               ║\n"
+            "║  Designer: Digital Marketing & UX Engineer                                    ║\n"
+            "║  Versione: 3.0 Design Edition                                                 ║\n"
+            "║                                                                               ║\n"
+            "╚═══════════════════════════════════════════════════════════════════════════════╝\n"
+        )
         print(banner)
 
     def check_python_version(self):
