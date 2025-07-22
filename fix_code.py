@@ -5,7 +5,6 @@ Script per correggere automaticamente tutti gli errori di formattazione PEP8
 """
 
 import re
-import ast
 
 
 def remove_unused_imports(content):
@@ -75,11 +74,10 @@ def remove_unused_imports(content):
     # Ricostruisci il file senza importazioni inutilizzate
     result_lines = []
 
-    for i, line in lines:
+    for i, line in enumerate(lines):
         if i in [info[0] for info in import_info.values()]:
             # È una riga di import, controlla se è utilizzata
             stripped = line.strip()
-            should_keep = False
 
             if stripped.startswith('import '):
                 import_part = stripped[7:].strip()
@@ -102,7 +100,9 @@ def remove_unused_imports(content):
                         # Ricostruisci import solo con moduli utilizzati
                         new_import = 'import ' + ', '.join(used_modules)
                         indent = len(line) - len(line.lstrip())
-                        result_lines.append(' ' * indent + new_import)
+                        result_lines.append(
+                            ' ' * indent + new_import
+                        )
 
             elif stripped.startswith('from '):
                 parts = stripped.split(' import ')
@@ -126,9 +126,13 @@ def remove_unused_imports(content):
                             result_lines.append(line)
                         else:
                             # Ricostruisci from import solo con nomi utilizzati
-                            new_import = f"{module_part} import {', '.join(used_imports)}"
+                            new_import = (
+                                f"{module_part} import "
+                                f"{', '.join(used_imports)}"
+                            )
                             indent = len(line) - len(line.lstrip())
                             result_lines.append(' ' * indent + new_import)
+                # Se nessun import usato, non aggiungere la riga
         else:
             result_lines.append(line)
 
@@ -166,7 +170,9 @@ def fix_line_length(content):
                         current_line += ' ' + word
                     else:
                         fixed_lines.append(current_line)
-                        current_line = ' ' * indent + '# ' + word
+                        current_line = (
+                            ' ' * indent + '# ' + word
+                        )
 
                 if current_line.strip() != '#':
                     fixed_lines.append(current_line)
@@ -352,7 +358,7 @@ def fix_spacing(content):
 
 def main():
     """Corregge tutti gli errori di formattazione"""
-    file_path = "app.py"
+    file_path = "exceltools_unified.py"
 
     print("🔧 Inizio correzione automatica errori PEP8...")
 

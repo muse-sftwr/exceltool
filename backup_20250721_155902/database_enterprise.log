@@ -1,0 +1,9 @@
+2025-07-16 17:56:43,341 - INFO - Database enterprise inizializzato con successo
+2025-07-16 18:19:01,491 - INFO - Database enterprise inizializzato con successo
+2025-07-16 18:19:01,770 - INFO - Sheet 'Sheet1' -> Tabella 'excel_test_vendite' (50 righe)
+2025-07-16 18:19:01,770 - INFO - Import completato: 1 tabelle, 50 righe totali
+2025-07-16 18:19:40,668 - INFO - Database enterprise inizializzato con successo
+2025-07-16 18:19:40,673 - INFO - Eseguendo query: SELECT * FROM [excel_test_vendite] LIMIT 3
+2025-07-16 18:19:40,676 - INFO - Query completata: 3 risultati
+2025-07-16 18:19:40,688 - INFO - Query salvata: test_finale
+2025-07-16 18:19:40,701 - INFO - Database ottimizzato con successo

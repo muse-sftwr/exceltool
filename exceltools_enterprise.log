@@ -1,0 +1,42 @@
+2025-07-22 15:44:43,687 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 15:44:55,722 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_sheet1
+2025-07-22 15:44:55,755 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_sheet2
+2025-07-22 15:44:55,756 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 15:44:57,957 - ExcelToolsEnterprise - INFO - Query eseguita: 10 risultati
+2025-07-22 15:45:18,446 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 15:45:20,301 - ExcelToolsEnterprise - INFO - Query eseguita: 10 risultati
+2025-07-22 15:45:23,701 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 15:45:24,445 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 15:45:24,983 - ExcelToolsEnterprise - INFO - Query eseguita: 10 risultati
+2025-07-22 15:45:25,437 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 15:45:27,350 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 16:26:51,090 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 16:29:02,287 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 16:29:09,323 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_sheet1
+2025-07-22 16:29:09,352 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_sheet2
+2025-07-22 16:29:09,352 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 16:29:10,314 - ExcelToolsEnterprise - INFO - Query eseguita: 10 risultati
+2025-07-22 16:29:22,265 - ExcelToolsEnterprise - ERROR - Errore query: Execution failed on sql 'SELECT * FROM Colonna3': no such table: Colonna3
+2025-07-22 16:29:23,146 - ExcelToolsEnterprise - ERROR - Errore query: Execution failed on sql 'SELECT * FROM Colonna3': no such table: Colonna3
+2025-07-22 16:47:26,437 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 16:47:35,706 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_sheet1
+2025-07-22 16:47:35,736 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_sheet2
+2025-07-22 16:47:35,736 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 16:53:09,037 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 16:57:31,829 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 16:57:50,815 - ExcelToolsEnterprise - INFO - Query eseguita: 10 risultati
+2025-07-22 16:57:56,205 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_sheet1
+2025-07-22 16:57:56,233 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_sheet2
+2025-07-22 16:57:56,234 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 16:57:56,676 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 16:58:20,350 - ExcelToolsEnterprise - INFO - Query eseguita: 0 risultati
+2025-07-22 16:58:29,004 - ExcelToolsEnterprise - INFO - Query eseguita: 7 risultati
+2025-07-22 17:53:11,505 - ExcelToolsEnterprise - INFO - Database enterprise inizializzato
+2025-07-22 17:53:22,956 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_-_copy_sheet1
+2025-07-22 17:53:22,987 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_-_copy_sheet2
+2025-07-22 17:53:22,988 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 17:53:22,992 - ExcelToolsEnterprise - ERROR - Errore get tables: near "-": syntax error
+2025-07-22 17:53:28,538 - ExcelToolsEnterprise - INFO - Importati 10 record in excel_book_7_sheet1
+2025-07-22 17:53:28,568 - ExcelToolsEnterprise - INFO - Importati 7 record in excel_book_7_sheet2
+2025-07-22 17:53:28,569 - ExcelToolsEnterprise - INFO - Import completato: 17 record totali
+2025-07-22 17:53:28,573 - ExcelToolsEnterprise - ERROR - Errore get tables: near "-": syntax error

@@ -1,0 +1,16 @@
+2025-07-16 18:13:16,019 - INFO - Database enterprise inizializzato con successo
+2025-07-16 18:14:10,575 - INFO - Sheet 'Sheet1' -> Tabella 'excel_book_7_sheet1' (10 righe)
+2025-07-16 18:14:10,619 - INFO - Sheet 'Sheet2' -> Tabella 'excel_book_7_sheet2' (7 righe)
+2025-07-16 18:14:10,621 - INFO - Import completato: 2 tabelle, 17 righe totali
+2025-07-16 18:14:16,300 - INFO - Eseguendo query: SELECT * FROM [excel_book_7_sheet1] LIMIT 100
+2025-07-16 18:14:16,303 - INFO - Query completata: 10 risultati
+2025-07-16 18:14:28,551 - INFO - Database ottimizzato con successo
+2025-07-16 18:14:33,771 - INFO - Eseguendo query: SELECT * FROM [excel_book_7_sheet2] LIMIT 100
+2025-07-16 18:14:33,773 - INFO - Query completata: 7 risultati
+2025-07-16 18:14:49,453 - INFO - Eseguendo query: SELECT * FROM [excel_book_7_sheet2] LIMIT 100
+2025-07-16 18:14:49,455 - INFO - Query completata: 7 risultati
+2025-07-16 18:14:51,628 - INFO - Eseguendo query: SELECT * FROM [excel_book_7_sheet2] LIMIT 100
+2025-07-16 18:14:51,630 - INFO - Query completata: 7 risultati
+2025-07-16 18:15:02,507 - INFO - Eseguendo query: SELECT * FROM [excel_book_7_sheet1] LIMIT 100
+2025-07-16 18:15:02,509 - INFO - Query completata: 10 risultati
+2025-07-16 18:15:29,213 - INFO - Query salvata: prova
