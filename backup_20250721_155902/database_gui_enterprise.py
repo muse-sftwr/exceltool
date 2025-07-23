@@ -12,7 +12,6 @@ Versione: Enterprise GUI 2.0
 """
 
 
-import os
 import threading
 from tkinter import filedialog, messagebox, ttk
 import tkinter as tk
@@ -173,7 +172,8 @@ class DatabaseExplorerGUI:
                     def save_merged(dialog, name_entry):
                         name = name_entry.get().strip()
                         if name:
-                            success = self.db_manager.import_dataframe_as_table(
+                            dbm = self.db_manager
+                            success = dbm.import_dataframe_as_table(
                                 merged_df,
                                 name
                             )
@@ -181,7 +181,8 @@ class DatabaseExplorerGUI:
                                 self.root.after(
                                     0,
                                     lambda: self.update_status(
-                                        f"✅ Merge completato in tabella '{name}'"
+                                        f"✅ Merge completato in tabella '"
+                                        f"{name}'"
                                     )
                                 )
                                 self.root.after(0, self.refresh_tables)
@@ -215,7 +216,6 @@ class DatabaseExplorerGUI:
                     lambda: self.update_status("❌ Nessun dato unito")
                 )
         threading.Thread(target=merge_thread, daemon=True).start()
-
 
     def create_navigation_panel(self, parent):
         """Crea pannello navigazione tabelle"""
@@ -327,7 +327,6 @@ class DatabaseExplorerGUI:
         )
         col_menu.pack(pady=5)
 
-
         def do_rewrite():
             func = func_var.get()
             col = col_var.get()
@@ -338,6 +337,19 @@ class DatabaseExplorerGUI:
                 dialog.destroy()
 
         tk.Button(dialog, text="Riscrivi", command=do_rewrite).pack(pady=10)
+        # Rilevazione errori SQL (base)
+        suggest = ""
+        popup_items = []
+        show_popup = False
+        if hasattr(self, 'table_var') and self.table_var.get():
+            table = self.table_var.get()
+            try:
+                columns = self.db_manager.get_table_columns(table)
+            except Exception:
+                columns = []
+            sql_up = sql.upper()
+            # Autocomplete funzioni SQL dopo SELECT
+            if sql_up.endswith("SELECT"):
                 sql_funcs = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
                 suggest = (
                     f"Funzioni: {', '.join(sql_funcs)} | "
@@ -523,7 +535,8 @@ class DatabaseExplorerGUI:
             )
             return
         # Colonne comuni per ON o colonne dopo funzione
-        match_func = re.search(r'SELECT\s+(COUNT|SUM|AVG|MIN|MAX)\($', before.upper())
+        match_func = re.search(
+            r'SELECT\s+(COUNT|SUM|AVG|MIN|MAX)\($', before.upper())
         if match_func:
             insert_pos = len(before)
             new_line = before + value + after
@@ -531,7 +544,8 @@ class DatabaseExplorerGUI:
             new_text = '\n'.join(lines)
             self.sql_text.delete("1.0", tk.END)
             self.sql_text.insert("1.0", new_text)
-            self.sql_text.mark_set(tk.INSERT, f"{line}.{insert_pos + len(value)}")
+            self.sql_text.mark_set(
+                tk.INSERT, f"{line}.{insert_pos + len(value)}")
             return
         match = re.search(r'(SELECT|FROM|WHERE|JOIN|ON)\s*$', before.upper())
         if match:
@@ -541,7 +555,8 @@ class DatabaseExplorerGUI:
             new_text = '\n'.join(lines)
             self.sql_text.delete("1.0", tk.END)
             self.sql_text.insert("1.0", new_text)
-            self.sql_text.mark_set(tk.INSERT, f"{line}.{insert_pos + len(value)}")
+            self.sql_text.mark_set(
+                tk.INSERT, f"{line}.{insert_pos + len(value)}")
             return
 
     def show_sql_help(self):
@@ -558,7 +573,9 @@ class DatabaseExplorerGUI:
         top = tk.Toplevel(self.root)
         top.title("Guida SQL")
         top.geometry("500x350")
-        tk.Label(top, text=help_text, justify="left", font=("Consolas", 11)).pack(padx=15, pady=15, fill="both", expand=True)
+        tk.Label(
+            top, text=help_text, justify="left", font=("Consolas", 11)
+        ).pack(padx=15, pady=15, fill="both", expand=True)
 
     def _autocomplete_columns(self, event=None):
         # Autocomplete colonne: mostra suggerimenti se si digita
@@ -903,86 +920,8 @@ class DatabaseExplorerGUI:
         desc_entry.pack(pady=5)
 
         def save_query():
-            name = name_entry.get().strip()
-        sql = self.sql_text.get("1.0", "end").strip()
-        suggest = ""
-        popup_items = []
-        show_popup = False
-        if hasattr(self, 'table_var') and self.table_var.get():
-            table = self.table_var.get()
-            try:
-                columns = self.db_manager.get_table_columns(table)
-            except Exception:
-                columns = []
-            sql_up = sql.upper()
-        # Autocomplete funzioni SQL dopo SELECT
-        if hasattr(self, 'table_var') and self.table_var.get():
-            if sql_up.endswith("SELECT"):
-                sql_funcs = ["COUNT", "SUM", "AVG", "MIN", "MAX"]
-                suggest = (
-                    f"Funzioni: {', '.join(sql_funcs)} | "
-                    f"Colonne: {', '.join(columns)}"
-                )
-                popup_items = sql_funcs + columns
-                show_popup = True
-            # Autocomplete funzioni SQL dopo SELECT <func>(
-            elif re.search(r'SELECT\s+(COUNT|SUM|AVG|MIN|MAX)\($', sql_up):
-                suggest = f"Colonne: {', '.join(columns)}"
-                popup_items = columns
-                show_popup = True
-            # Autocomplete colonne dopo SELECT * o WHERE
-            elif sql_up.endswith("SELECT *") or sql_up.endswith("WHERE"):
-                suggest = f"Colonne: {', '.join(columns)}"
-                popup_items = columns
-                show_popup = True
-            # Autocomplete tabella dopo FROM
-            elif sql_up.endswith("FROM"):
-                suggest = f"Tabella: {table}"
-                popup_items = [table]
-                show_popup = True
-            # Autocomplete JOIN types
-            elif (
-                sql_up.rstrip().endswith("JOIN") or
-                sql_up.rstrip().endswith("JOIN ")
-            ):
-                join_types = [
-                    "INNER JOIN", "LEFT JOIN",
-                    "RIGHT JOIN", "FULL OUTER JOIN"
-                ]
-                suggest = "Tipi di JOIN: " + ", ".join(join_types)
-                popup_items = join_types
-                show_popup = True
-            # Autocomplete ON dopo JOIN tabella
-            elif "JOIN" in sql_up and sql_up.rstrip().endswith("ON"):
-                current_table = table
-                join_table = None
-                m = re.search(r'JOIN\s+(\w+)', sql_up)
-                if m:
-                    join_table = m.group(1)
-                join_cols = []
-                if join_table:
-                    try:
-                        cols1 = set(
-                            self.db_manager.get_table_columns(current_table)
-                        )
-                        cols2 = set(
-                            self.db_manager.get_table_columns(join_table)
-                        )
-                        join_cols = list(cols1 & cols2)
-                    except Exception:
-                        join_cols = []
-                if join_cols:
-                    suggest = (
-                        f"Colonne comuni per ON: {', '.join(join_cols)}"
-                    )
-                    popup_items = join_cols
-                    show_popup = True
-                else:
-                    suggest = (
-                        "Scrivi la condizione ON (es: tab1.col = tab2.col)"
-                    )
-                    popup_items = []
-                    show_popup = False
+            # name = name_entry.get().strip()  # Unused variable removed
+            pass
 
     def refresh_saved_queries(self):
         """Aggiorna lista query salvate"""
